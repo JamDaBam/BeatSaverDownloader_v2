@@ -1,6 +1,7 @@
 package BeatSaverClasses;
 
 import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -203,4 +204,8 @@ public class Doc {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }
