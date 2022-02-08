@@ -12,29 +12,25 @@ public class RestSongDataProvider implements ISongDataProvider {
 
     @Override
     public String getLatest() {
-        String res = "";
-
-        try {
-            res = IOUtils.toString(Runtime.getRuntime()
-                                          .exec(COMMAND_LATEST)
-                                          .getInputStream(), Charset.defaultCharset());
-
-        } catch (IOException aE) {
-            aE.printStackTrace();
-        }
-
-        return res;
+        return exec(COMMAND_LATEST, "");
     }
 
     @Override
     public String getSongsFrom(String aUploaderId) {
+        return exec(COMMAND_UPLOADER, aUploaderId);
+    }
+
+    private String exec(String aCommand, String aParam) {
+        if (aParam == null) {
+            return "";
+        }
+
         String res = "";
 
         try {
             res = IOUtils.toString(Runtime.getRuntime()
-                                          .exec(String.format(COMMAND_UPLOADER, aUploaderId))
+                                          .exec(String.format(aCommand, aParam))
                                           .getInputStream(), Charset.defaultCharset());
-
         } catch (IOException aE) {
             aE.printStackTrace();
         }
