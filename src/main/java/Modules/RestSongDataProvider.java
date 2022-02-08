@@ -9,7 +9,6 @@ public class RestSongDataProvider implements ISongDataProvider {
     private static final String COMMAND_LATEST = "curl -X GET \"https://api.beatsaver.com/maps/latest?automapper=false\" -H \"accept: application/json\"";
     private static final String COMMAND_UPLOADER = "curl -X GET \"https://api.beatsaver.com/maps/uploader/%s/0\" -H \"accept: application/json\"";
 
-
     @Override
     public String getLatest() {
         return exec(COMMAND_LATEST, "");
