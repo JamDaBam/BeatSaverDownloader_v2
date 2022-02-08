@@ -1,29 +1,30 @@
-import BeatSaverClasses.BeatSaverEntries;
-import BeatSaverClasses.BeatSaverEntry;
+import BeatSaverClasses.BeatsaverCollection;
+import BeatSaverClasses.Uploader;
+import Modules.ISongDataProvider;
+import Modules.IUploaderDataProvider;
+import Modules.RestSongDataProvider;
+import Modules.RestUploaderDataProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String command = "curl -X GET \"https://api.beatsaver.com/maps/latest?automapper=false\" -H \"accept: application/json\"";
-        Process process = Runtime.getRuntime()
-                                 .exec(command);
-        InputStream inputStream = process.getInputStream();
-        String json = IOUtils.toString(inputStream, Charset.defaultCharset());
-        System.out.println(json);
+        ISongDataProvider songDataProvider = new RestSongDataProvider();
+        String latest = songDataProvider.getSongsFrom("50472");
+        BeatsaverCollection beatsaverCollection = new ObjectMapper().readValue(latest, BeatsaverCollection.class);
+//        System.out.println(beatsaverCollection.getDocs().get(0).getName());
 
-        ObjectMapper om = new ObjectMapper();
-        BeatSaverEntries root = om.readValue(json, BeatSaverEntries.class);
-        System.out.println(root.docs.get(0).name);
-        System.out.println(root.docs.get(0).versions.get(0).downloadURL);
 
-        String s = om.writer()
-                     .writeValueAsString(root);
+        IUploaderDataProvider uploaderDataProvider = new RestUploaderDataProvider();
+        String byId = uploaderDataProvider.getById("50472");
+        Uploader uploader = new ObjectMapper().readValue(byId, Uploader.class);
+        System.out.println(uploader.getName());
 
-        System.out.println(s);
+
+// ObjectMapper om = new ObjectMapper();
+//BeatsaverCollection root = om.readValue(json, BeatsaverCollection.class);
+//        System.out.println();
     }
 }
