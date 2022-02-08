@@ -7,9 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"id", "name", "hash", "avatar", "stats", "type"})
+@JsonPropertyOrder({"id", "name", "hash", "avatar", "type"})
 public class Uploader {
-
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("name")
@@ -18,8 +17,6 @@ public class Uploader {
     private String hash;
     @JsonProperty("avatar")
     private String avatar;
-    @JsonProperty("stats")
-    private Stats stats;
     @JsonProperty("type")
     private String type;
     @JsonIgnore
@@ -63,16 +60,6 @@ public class Uploader {
     @JsonProperty("avatar")
     public void setAvatar(String avatar) {
         this.avatar = avatar;
-    }
-
-    @JsonProperty("stats")
-    public Stats getStats() {
-        return stats;
-    }
-
-    @JsonProperty("stats")
-    public void setStats(Stats stats) {
-        this.stats = stats;
     }
 
     @JsonProperty("type")

@@ -9,7 +9,6 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"plays", "downloads", "upvotes", "downvotes", "score"})
 public class Stats {
-
     @JsonProperty("plays")
     private Integer plays;
     @JsonProperty("downloads")
