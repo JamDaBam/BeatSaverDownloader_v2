@@ -3,7 +3,7 @@ package Modules.Parser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JackosnParser implements IJsonParser {
+public class JacksonParser implements IJsonParser {
 
     @Override
     public <T> T parse(String aJson, Class<T> aClass) {

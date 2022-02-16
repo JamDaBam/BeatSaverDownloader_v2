@@ -1,15 +1,20 @@
 package BeatSaverClasses;
 
+import Modules.DB.IDBDriver;
+import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"id", "name", "description", "uploader", "metadata", "stats", "uploaded", "automapper", "ranked", "qualified", "versions", "createdAt", "updatedAt", "lastPublishedAt", "tags"})
-public class Doc {
+public class Doc implements IDataBaseEntity {
 
     @JsonProperty("id")
     private String id;
@@ -92,6 +97,10 @@ public class Doc {
     @JsonProperty("metadata")
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+
+        if (metadata != null) {
+            metadata.setSongId(id);
+        }
     }
 
     @JsonProperty("stats")
@@ -102,6 +111,10 @@ public class Doc {
     @JsonProperty("stats")
     public void setStats(Stats stats) {
         this.stats = stats;
+
+        if (stats != null) {
+            stats.setSongId(id);
+        }
     }
 
     @JsonProperty("uploaded")
@@ -152,6 +165,12 @@ public class Doc {
     @JsonProperty("versions")
     public void setVersions(List<Version> versions) {
         this.versions = versions;
+
+        if (versions != null) {
+            for (Version version : versions) {
+                version.setSongId(id);
+            }
+        }
     }
 
     @JsonProperty("createdAt")
@@ -207,5 +226,34 @@ public class Doc {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    @Override
+    public void insert(IDBDriver aDBDriver) {
+        Connection connection = aDBDriver.getConnection();
+
+        uploader.insert(aDBDriver);
+        metadata.insert(aDBDriver);
+        stats.insert(aDBDriver);
+        if (versions != null) {
+            for (Version version : versions) {
+                version.insert(aDBDriver);
+            }
+        }
+
+        try {
+            String nameClean = name.replace("'", "");
+            String descriptionClean = description.replace("'", "")
+                                                 .replace("\n", " ");
+
+            Statement statement = connection.createStatement();
+            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Song\n" + "(songId, name, description, uploaderId, uploaded, automapper, ranked, qualified, createdAt, updatedAt, lastPublishedAt)\n" + " VALUES('" + id + "', '" + nameClean + "', '" + descriptionClean + "', " + uploader.getId() + ", '" + uploaded + "', " + automapper + ", " + ranked + ", " + qualified + ", '" + createdAt + "', '" + updatedAt + "', '" + lastPublishedAt + "');\n";
+            statement.execute(preparedStatement);
+        } catch (SQLException aE) {
+            aE.printStackTrace();
+        }
+
+
+        System.out.println("processed " + id);
     }
 }

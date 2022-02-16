@@ -1,14 +1,19 @@
 package BeatSaverClasses;
 
+import Modules.DB.IDBDriver;
+import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"plays", "downloads", "upvotes", "downvotes", "score"})
-public class Stats {
+public class Stats implements IDataBaseEntity {
     @JsonProperty("plays")
     private Integer plays;
     @JsonProperty("downloads")
@@ -21,6 +26,8 @@ public class Stats {
     private Double score;
     @JsonIgnore
     private final Map<String, Object> additionalProperties = new HashMap<>();
+
+    private String songId;
 
     @JsonProperty("plays")
     public Integer getPlays() {
@@ -82,8 +89,30 @@ public class Stats {
         this.additionalProperties.put(name, value);
     }
 
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String aSongId) {
+        songId = aSongId;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+
+    @Override
+    public void insert(IDBDriver aDBDriver) {
+        Connection connection = aDBDriver.getConnection();
+
+        try {
+            Statement statement = connection.createStatement();
+            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Stats\n" + "(songId, plays, downloads, upvotes, downvotes, score)\n" + "VALUES('" + songId + "', " + plays + ", " + downloads + ", " + upvotes + ", " + downvotes + ", " + score + ");";
+            statement.execute(preparedStatement);
+        } catch (SQLException aE) {
+            aE.printStackTrace();
+        }
     }
 }

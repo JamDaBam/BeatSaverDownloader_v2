@@ -1,14 +1,19 @@
 package BeatSaverClasses;
 
+import Modules.DB.IDBDriver;
+import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"id", "name", "hash", "avatar", "type"})
-public class Uploader {
+public class Uploader implements IDataBaseEntity {
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("name")
@@ -85,5 +90,18 @@ public class Uploader {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    @Override
+    public void insert(IDBDriver aDBDriver) {
+        Connection connection = aDBDriver.getConnection();
+
+        try {
+            Statement statement = connection.createStatement();
+            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Uploader\n" + "(uploaderId, name, hash, avatar, `type`)\n" + "VALUES(" + id + ", '" + name + "', '" + hash + "', '" + avatar + "', '" + type + "');\n";
+            statement.execute(preparedStatement);
+        } catch (SQLException aE) {
+            aE.printStackTrace();
+        }
     }
 }

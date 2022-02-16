@@ -1,15 +1,20 @@
 package BeatSaverClasses;
 
+import Modules.DB.IDBDriver;
+import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"hash", "state", "createdAt", "sageScore", "diffs", "downloadURL", "coverURL", "previewURL"})
-public class Version {
+public class Version implements IDataBaseEntity {
 
     @JsonProperty("hash")
     private String hash;
@@ -29,6 +34,8 @@ public class Version {
     private String previewURL;
     @JsonIgnore
     private final Map<String, Object> additionalProperties = new HashMap<>();
+
+    private String songId;
 
     @JsonProperty("hash")
     public String getHash() {
@@ -120,8 +127,29 @@ public class Version {
         this.additionalProperties.put(name, value);
     }
 
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String aSongId) {
+        songId = aSongId;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    @Override
+    public void insert(IDBDriver aDBDriver) {
+        Connection connection = aDBDriver.getConnection();
+
+        try {
+            Statement statement = connection.createStatement();
+            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Version\n" + "(hash, state, createdAt, sageScore, downloadURL, coverURL, previewURL)\n" + "VALUES('" + hash + "', '" + state + "', '" + createdAt + "', '" + sageScore + "', '" + downloadURL + "', '" + coverURL + "', '" + previewURL + "');\n";
+            statement.execute(preparedStatement);
+        } catch (SQLException aE) {
+            aE.printStackTrace();
+        }
     }
 }

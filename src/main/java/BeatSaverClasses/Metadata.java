@@ -1,14 +1,19 @@
 package BeatSaverClasses;
 
+import Modules.DB.IDBDriver;
+import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"bpm", "duration", "songName", "songSubName", "songAuthorName", "levelAuthorName"})
-public class Metadata {
+public class Metadata implements IDataBaseEntity {
 
     @JsonProperty("bpm")
     private Double bpm;
@@ -24,6 +29,8 @@ public class Metadata {
     private String levelAuthorName;
     @JsonIgnore
     private final Map<String, Object> additionalProperties = new HashMap<>();
+
+    private String songId;
 
     @JsonProperty("bpm")
     public Double getBpm() {
@@ -95,8 +102,32 @@ public class Metadata {
         this.additionalProperties.put(name, value);
     }
 
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String aSongId) {
+        songId = aSongId;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    @Override
+    public void insert(IDBDriver aDBDriver) {
+        Connection connection = aDBDriver.getConnection();
+
+        try {
+            String songNameClean = songName.replace("'", "");
+            String songSubNameClean = songSubName.replace("'", "");
+
+            Statement statement = connection.createStatement();
+            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Metadata\n" + "(songId, bpm, duration, songName, songSubName, songAuthorName, levelAuthorName)\n" + "VALUES('" + songId + "', " + bpm + ", " + duration + ", '" + songNameClean + "', '" + songSubNameClean + "', '" + songAuthorName + "', '" + levelAuthorName + "');\n";
+            statement.execute(preparedStatement);
+        } catch (SQLException aE) {
+            aE.printStackTrace();
+        }
     }
 }
