@@ -15,6 +15,7 @@ public class MySQLDriver implements IDBDriver {
 
         try {
             ivConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + "Beatsaver", "root", "admin123");
+
             ivConnection.setAutoCommit(false);
         } catch (SQLException aE) {
             aE.printStackTrace();

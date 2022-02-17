@@ -1,11 +1,13 @@
 package Modules.DataProvider;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface ISongDataProvider {
-    String getById(String aId);
+    CompletableFuture<String> getById(String aId);
 
-    String getLatest();
+    CompletableFuture<String> getLatest();
 
-    String[] getLatest(int aPages);
+    CompletableFuture<String[]> getLatest(int aPages);
 
-    String getSongsFrom(String aUploaderId);
+    CompletableFuture<String> getSongsFrom(String aUploaderId);
 }

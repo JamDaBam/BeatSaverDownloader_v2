@@ -1,7 +1,9 @@
 package Modules.DataProvider;
 
-public interface IUploaderDataProvider {
-    String getById(String aId);
+import java.util.concurrent.CompletableFuture;
 
-    String getByName(String aName);
+public interface IUploaderDataProvider {
+    CompletableFuture<String> getById(String aId);
+
+    CompletableFuture<String> getByName(String aName);
 }

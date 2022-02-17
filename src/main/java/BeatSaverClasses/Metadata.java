@@ -119,16 +119,23 @@ public class Metadata implements IDataBaseEntity {
     public void insert(IDBDriver aDBDriver) {
         Connection connection = aDBDriver.getConnection();
 
+        String songNameClean = songName.replace("'", "''")
+                                       .replace("\\", "\\\\");
+        String songSubNameClean = songSubName.replace("'", "''")
+                                             .replace("\\", "\\\\");
+        String songAuthorNameClean = songAuthorName.replace("'", "''")
+                                                   .replace("\\", "\\\\");
+        String levelAuthorNameClean = levelAuthorName.replace("'", "''")
+                                                     .replace("\\", "\\\\");
+        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Metadata\n" + "(songId, bpm, duration, songName, songSubName, songAuthorName, levelAuthorName)\n" + "VALUES('" + songId + "', " + bpm + ", " + duration + ", '" + songNameClean + "', '" + songSubNameClean + "', '" + songAuthorNameClean + "', '" + levelAuthorNameClean + "');\n";
+
         try {
-            String songNameClean = songName.replace("'", "''");
-            String songSubNameClean = songSubName.replace("'", "''");
-            String songAuthorNameClean = songAuthorName.replace("'", "''");
-            String levelAuthorNameClean = levelAuthorName.replace("'", "''");
             Statement statement = connection.createStatement();
-            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Metadata\n" + "(songId, bpm, duration, songName, songSubName, songAuthorName, levelAuthorName)\n" + "VALUES('" + songId + "', " + bpm + ", " + duration + ", '" + songNameClean + "', '" + songSubNameClean + "', '" + songAuthorNameClean + "', '" + levelAuthorNameClean + "');\n";
             statement.execute(preparedStatement);
+            statement.close();
         } catch (SQLException aE) {
             aE.printStackTrace();
+            System.out.println(preparedStatement);
         }
     }
 }

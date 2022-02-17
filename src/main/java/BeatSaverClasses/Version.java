@@ -144,12 +144,15 @@ public class Version implements IDataBaseEntity {
     public void insert(IDBDriver aDBDriver) {
         Connection connection = aDBDriver.getConnection();
 
+        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Version\n" + "(hash, songId, state, createdAt, sageScore, downloadURL, coverURL, previewURL)\n" + "VALUES('" + hash + "', '" + songId + "', '" + state + "', '" + createdAt + "', '" + sageScore + "', '" + downloadURL + "', '" + coverURL + "', '" + previewURL + "');\n";
+
         try {
             Statement statement = connection.createStatement();
-            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Version\n" + "(hash, state, createdAt, sageScore, downloadURL, coverURL, previewURL)\n" + "VALUES('" + hash + "', '" + state + "', '" + createdAt + "', '" + sageScore + "', '" + downloadURL + "', '" + coverURL + "', '" + previewURL + "');\n";
             statement.execute(preparedStatement);
+            statement.close();
         } catch (SQLException aE) {
             aE.printStackTrace();
+            System.out.println(preparedStatement);
         }
     }
 }

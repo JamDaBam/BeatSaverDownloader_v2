@@ -9,33 +9,35 @@ import Modules.Parser.IJsonParser;
 import Modules.Parser.JacksonParser;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class Main {
     public static void main(String[] args) {
-        IDBDriver dbriver = new MySQLDriver();
-
+        IDBDriver driver = new MySQLDriver();
         IJsonParser parser = new JacksonParser();
 
         ISongDataProvider songDataProvider = new RestSongDataProvider();
-        String[] latest = songDataProvider.getLatest(10);
 
 
-//        String[] latest = new String[]{songDataProvider.getLatest()};
+        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(2000)
+                                                                        .thenAcceptAsync(latest -> {
 
-        for (String json : latest) {
-            Collection parse = parser.parse(json, Collection.class);
+                                                                            for (String json : latest) {
+                                                                                Collection parse = parser.parse(json, Collection.class);
 
+                                                                                List<Doc> docs = parse.getDocs();
+                                                                                if (docs != null) {
+                                                                                    for (IDataBaseEntity song : docs) {
+                                                                                        song.insert(driver);
+                                                                                    }
+                                                                                }
 
-            List<Doc> docs = parse.getDocs();
-            if (docs != null) {
-                for (IDataBaseEntity song : docs) {
-                    song.insert(dbriver);
-                }
-            }
-        }
+                                                                                driver.commit();
+                                                                            }
 
+                                                                            driver.close();
+                                                                        });
 
-        dbriver.commit();
-        dbriver.close();
+        voidCompletableFuture.join();
     }
 }

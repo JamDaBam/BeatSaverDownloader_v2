@@ -96,13 +96,17 @@ public class Uploader implements IDataBaseEntity {
     public void insert(IDBDriver aDBDriver) {
         Connection connection = aDBDriver.getConnection();
 
+        String nameClean = name.replace("'", "''")
+                               .replace("\\", "\\\\");
+        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Uploader\n" + "(uploaderId, name, hash, avatar, `type`)\n" + "VALUES(" + id + ", '" + nameClean + "', '" + hash + "', '" + avatar + "', '" + type + "');\n";
+
         try {
             Statement statement = connection.createStatement();
-            String nameClean = name.replace("'", "''");
-            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Uploader\n" + "(uploaderId, name, hash, avatar, `type`)\n" + "VALUES(" + id + ", '" + nameClean + "', '" + hash + "', '" + avatar + "', '" + type + "');\n";
             statement.execute(preparedStatement);
+            statement.close();
         } catch (SQLException aE) {
             aE.printStackTrace();
+            System.out.println(preparedStatement);
         }
     }
 }

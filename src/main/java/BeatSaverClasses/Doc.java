@@ -231,28 +231,33 @@ public class Doc implements IDataBaseEntity {
     @Override
     public void insert(IDBDriver aDBDriver) {
         Connection connection = aDBDriver.getConnection();
-
         uploader.insert(aDBDriver);
+
+        String nameClean = name.replace("'", "''")
+                               .replace("\\", "\\\\");
+        String descriptionClean = description.replace("'", "''")
+                                             .replace("\n", " ")
+                                             .replace("\\", "\\\\");
+        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Song\n" + "(songId, name, description, uploaderId, uploaded, automapper, ranked, qualified, createdAt, updatedAt, lastPublishedAt)\n" + " VALUES('" + id + "', '" + nameClean + "', '" + descriptionClean + "', " + uploader.getId() + ", '" + uploaded + "', " + automapper + ", " + ranked + ", " + qualified + ", '" + createdAt + "', '" + updatedAt + "', '" + lastPublishedAt + "');\n";
+
+        try {
+
+            Statement statement = connection.createStatement();
+            statement.execute(preparedStatement);
+            statement.close();
+        } catch (SQLException aE) {
+            aE.printStackTrace();
+            System.out.println(preparedStatement);
+        }
+
         metadata.insert(aDBDriver);
         stats.insert(aDBDriver);
+
         if (versions != null) {
             for (Version version : versions) {
                 version.insert(aDBDriver);
             }
         }
-
-        try {
-            String nameClean = name.replace("'", "''");
-            String descriptionClean = description.replace("'", "''")
-                                                 .replace("\n", " ");
-
-            Statement statement = connection.createStatement();
-            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Song\n" + "(songId, name, description, uploaderId, uploaded, automapper, ranked, qualified, createdAt, updatedAt, lastPublishedAt)\n" + " VALUES('" + id + "', '" + nameClean + "', '" + descriptionClean + "', " + uploader.getId() + ", '" + uploaded + "', " + automapper + ", " + ranked + ", " + qualified + ", '" + createdAt + "', '" + updatedAt + "', '" + lastPublishedAt + "');\n";
-            statement.execute(preparedStatement);
-        } catch (SQLException aE) {
-            aE.printStackTrace();
-        }
-
 
         System.out.println("processed " + id);
     }
