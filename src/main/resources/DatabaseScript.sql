@@ -8,7 +8,8 @@ CREATE TABLE `Metadata` (
   `songSubName` varchar(100) DEFAULT NULL,
   `songAuthorName` varchar(100) DEFAULT NULL,
   `levelAuthorName` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`songId`)
+  PRIMARY KEY (`songId`),
+  CONSTRAINT `Metadata_FK` FOREIGN KEY (`songId`) REFERENCES `Song` (`songId`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `Song` (
@@ -16,7 +17,6 @@ CREATE TABLE `Song` (
   `name` varchar(100) NOT NULL,
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci,
   `uploaderId` int NOT NULL,
-  `metadataId` varchar(100) DEFAULT NULL,
   `uploaded` varchar(100) DEFAULT NULL,
   `automapper` tinyint(1) DEFAULT NULL,
   `ranked` tinyint(1) DEFAULT NULL,
@@ -25,10 +25,8 @@ CREATE TABLE `Song` (
   `updatedAt` varchar(100) DEFAULT NULL,
   `lastPublishedAt` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`songId`),
-  KEY `Song_FK_2` (`uploaderId`),
-  CONSTRAINT `Song_FK` FOREIGN KEY (`songId`) REFERENCES `Metadata` (`songId`) ON DELETE CASCADE,
-  CONSTRAINT `Song_FK_1` FOREIGN KEY (`songId`) REFERENCES `Stats` (`songId`) ON DELETE CASCADE,
-  CONSTRAINT `Song_FK_2` FOREIGN KEY (`uploaderId`) REFERENCES `Uploader` (`uploaderId`)
+  KEY `Song_FK` (`uploaderId`),
+  CONSTRAINT `Song_FK` FOREIGN KEY (`uploaderId`) REFERENCES `Uploader` (`uploaderId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `Stats` (
@@ -38,7 +36,8 @@ CREATE TABLE `Stats` (
   `upvotes` int DEFAULT NULL,
   `downvotes` int DEFAULT NULL,
   `score` double DEFAULT NULL,
-  PRIMARY KEY (`songId`)
+  PRIMARY KEY (`songId`),
+  CONSTRAINT `Stats_FK` FOREIGN KEY (`songId`) REFERENCES `Song` (`songId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `Uploader` (
@@ -59,5 +58,7 @@ CREATE TABLE `Version` (
   `downloadURL` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `coverURL` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `previewURL` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  PRIMARY KEY (`songId`,`hash`)
+  PRIMARY KEY (`hash`),
+  KEY `Version_FK` (`songId`),
+  CONSTRAINT `Version_FK` FOREIGN KEY (`songId`) REFERENCES `Song` (`songId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
