@@ -12,21 +12,28 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        IDBDriver dbriver = new MySQLDriver();
+
         IJsonParser parser = new JacksonParser();
 
         ISongDataProvider songDataProvider = new RestSongDataProvider();
-        String latest = songDataProvider.getLatest();
-        Collection parse = parser.parse(latest, Collection.class);
-
-        IDBDriver dbriver = new MySQLDriver();
+        String[] latest = songDataProvider.getLatest(10);
 
 
-        List<Doc> docs = parse.getDocs();
-        if (docs != null) {
-            for (IDataBaseEntity song : docs) {
-                song.insert(dbriver);
+//        String[] latest = new String[]{songDataProvider.getLatest()};
+
+        for (String json : latest) {
+            Collection parse = parser.parse(json, Collection.class);
+
+
+            List<Doc> docs = parse.getDocs();
+            if (docs != null) {
+                for (IDataBaseEntity song : docs) {
+                    song.insert(dbriver);
+                }
             }
         }
+
 
         dbriver.commit();
         dbriver.close();

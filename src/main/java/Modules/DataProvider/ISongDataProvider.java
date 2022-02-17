@@ -5,5 +5,7 @@ public interface ISongDataProvider {
 
     String getLatest();
 
+    String[] getLatest(int aPages);
+
     String getSongsFrom(String aUploaderId);
 }

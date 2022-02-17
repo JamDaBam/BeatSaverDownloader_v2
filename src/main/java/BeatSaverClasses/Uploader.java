@@ -98,7 +98,8 @@ public class Uploader implements IDataBaseEntity {
 
         try {
             Statement statement = connection.createStatement();
-            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Uploader\n" + "(uploaderId, name, hash, avatar, `type`)\n" + "VALUES(" + id + ", '" + name + "', '" + hash + "', '" + avatar + "', '" + type + "');\n";
+            String nameClean = name.replace("'", "''");
+            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Uploader\n" + "(uploaderId, name, hash, avatar, `type`)\n" + "VALUES(" + id + ", '" + nameClean + "', '" + hash + "', '" + avatar + "', '" + type + "');\n";
             statement.execute(preparedStatement);
         } catch (SQLException aE) {
             aE.printStackTrace();

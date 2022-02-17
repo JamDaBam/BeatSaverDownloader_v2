@@ -242,8 +242,8 @@ public class Doc implements IDataBaseEntity {
         }
 
         try {
-            String nameClean = name.replace("'", "");
-            String descriptionClean = description.replace("'", "")
+            String nameClean = name.replace("'", "''");
+            String descriptionClean = description.replace("'", "''")
                                                  .replace("\n", " ");
 
             Statement statement = connection.createStatement();

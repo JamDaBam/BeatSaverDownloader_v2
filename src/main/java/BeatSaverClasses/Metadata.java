@@ -120,11 +120,12 @@ public class Metadata implements IDataBaseEntity {
         Connection connection = aDBDriver.getConnection();
 
         try {
-            String songNameClean = songName.replace("'", "");
-            String songSubNameClean = songSubName.replace("'", "");
-
+            String songNameClean = songName.replace("'", "''");
+            String songSubNameClean = songSubName.replace("'", "''");
+            String songAuthorNameClean = songAuthorName.replace("'", "''");
+            String levelAuthorNameClean = levelAuthorName.replace("'", "''");
             Statement statement = connection.createStatement();
-            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Metadata\n" + "(songId, bpm, duration, songName, songSubName, songAuthorName, levelAuthorName)\n" + "VALUES('" + songId + "', " + bpm + ", " + duration + ", '" + songNameClean + "', '" + songSubNameClean + "', '" + songAuthorName + "', '" + levelAuthorName + "');\n";
+            String preparedStatement = "INSERT IGNORE INTO Beatsaver.Metadata\n" + "(songId, bpm, duration, songName, songSubName, songAuthorName, levelAuthorName)\n" + "VALUES('" + songId + "', " + bpm + ", " + duration + ", '" + songNameClean + "', '" + songSubNameClean + "', '" + songAuthorNameClean + "', '" + levelAuthorNameClean + "');\n";
             statement.execute(preparedStatement);
         } catch (SQLException aE) {
             aE.printStackTrace();
