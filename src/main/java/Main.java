@@ -20,7 +20,7 @@ public class Main {
 
         ISongDataProvider songDataProvider = new RestSongDataProvider(ZoneId.of("Europe/Berlin"));
 
-        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(2, DateUtil.of(2019, 11, 25))
+        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(3, DateUtil.of(2018, 05, 8))
                                                                         .thenAcceptAsync(latest -> {
 
                                                                             int songFrom = 0;

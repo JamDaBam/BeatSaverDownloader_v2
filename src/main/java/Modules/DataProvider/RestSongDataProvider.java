@@ -7,7 +7,9 @@ import java.nio.charset.Charset;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class RestSongDataProvider implements ISongDataProvider {
@@ -44,9 +46,8 @@ public class RestSongDataProvider implements ISongDataProvider {
     @Override
     public CompletableFuture<String[]> getLatest(int aPages, Date aBeforeDate) {
         return CompletableFuture.supplyAsync(() -> {
-            String[] res = new String[aPages];
+            List<String> arrayList = new ArrayList<>();
 
-            //Startdatei
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH'%3A'MM'%3A'ss'%2B'00'%3A'00");
             String startDate = ZonedDateTime.ofInstant(aBeforeDate.toInstant(), ivZoneId)
                                             .format(formatter);
@@ -64,11 +65,11 @@ public class RestSongDataProvider implements ISongDataProvider {
                 System.out.println("process page " + i + "... " + currentDate);
 
                 String json = exec(COMMAND_LATEST_WITH_TIMESTAMP, currentDate);
-                res[i] = json;
+                arrayList.add(json);
 
                 currentDate = getLastUploadedDate(json);
             }
-            return res;
+            return arrayList.toArray(new String[0]);
         });
     }
 
