@@ -7,7 +7,9 @@ import Modules.DataProvider.ISongDataProvider;
 import Modules.DataProvider.RestSongDataProvider;
 import Modules.Parser.IJsonParser;
 import Modules.Parser.JacksonParser;
+import Utils.DateUtil;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -16,21 +18,27 @@ public class Main {
         IDBDriver driver = new MySQLDriver();
         IJsonParser parser = new JacksonParser();
 
-        ISongDataProvider songDataProvider = new RestSongDataProvider();
+        ISongDataProvider songDataProvider = new RestSongDataProvider(ZoneId.of("Europe/Berlin"));
 
-
-        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(2000)
+        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(2, DateUtil.of(2019, 11, 25))
                                                                         .thenAcceptAsync(latest -> {
+
+                                                                            int songFrom = 0;
+                                                                            int songTo;
 
                                                                             for (String json : latest) {
                                                                                 Collection parse = parser.parse(json, Collection.class);
 
                                                                                 List<Doc> docs = parse.getDocs();
-                                                                                if (docs != null) {
-                                                                                    for (IDataBaseEntity song : docs) {
-                                                                                        song.insert(driver);
-                                                                                    }
+                                                                                songTo = songFrom + docs.size();
+
+                                                                                System.out.println("process... " + songFrom + " to " + songTo);
+
+                                                                                for (IDataBaseEntity song : docs) {
+                                                                                    song.insert(driver);
                                                                                 }
+
+                                                                                songFrom = songTo;
 
                                                                                 driver.commit();
                                                                             }

@@ -258,7 +258,5 @@ public class Doc implements IDataBaseEntity {
                 version.insert(aDBDriver);
             }
         }
-
-        System.out.println("processed " + id);
     }
 }

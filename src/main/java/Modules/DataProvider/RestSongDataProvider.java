@@ -4,8 +4,10 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 public class RestSongDataProvider implements ISongDataProvider {
@@ -13,6 +15,16 @@ public class RestSongDataProvider implements ISongDataProvider {
     private static final String COMMAND_LATEST = "curl -X GET \"https://api.beatsaver.com/maps/latest\" -H \"accept: application/json\"";
     private static final String COMMAND_LATEST_WITH_TIMESTAMP = "curl -X GET \"https://api.beatsaver.com/maps/latest?before=%s\" -H \"accept: application/json";
     private static final String COMMAND_UPLOADER = "curl -X GET \"https://api.beatsaver.com/maps/uploader/%s/0\" -H \"accept: application/json\"";
+
+    private final ZoneId ivZoneId;
+
+    public RestSongDataProvider() {
+        ivZoneId = ZoneId.systemDefault();
+    }
+
+    public RestSongDataProvider(ZoneId aZoneId) {
+        ivZoneId = aZoneId;
+    }
 
     @Override
     public CompletableFuture<String> getById(String aId) {
@@ -26,12 +38,17 @@ public class RestSongDataProvider implements ISongDataProvider {
 
     @Override
     public CompletableFuture<String[]> getLatest(int aPages) {
+        return getLatest(aPages, new Date());
+    }
+
+    @Override
+    public CompletableFuture<String[]> getLatest(int aPages, Date aBeforeDate) {
         return CompletableFuture.supplyAsync(() -> {
             String[] res = new String[aPages];
 
-            //Startdate
+            //Startdatei
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH'%3A'MM'%3A'ss'%2B'00'%3A'00");
-            String startDate = ZonedDateTime.now()
+            String startDate = ZonedDateTime.ofInstant(aBeforeDate.toInstant(), ivZoneId)
                                             .format(formatter);
 
             String currentDate = null;
@@ -39,6 +56,9 @@ public class RestSongDataProvider implements ISongDataProvider {
             for (int i = 0; i < aPages; i++) {
                 if (currentDate == null) {
                     currentDate = startDate;
+                }
+                if (currentDate.isBlank()) {
+                    break;
                 }
 
                 System.out.println("process page " + i + "... " + currentDate);
