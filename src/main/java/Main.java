@@ -1,13 +1,12 @@
-import BeatSaverClasses.Collection;
-import BeatSaverClasses.Doc;
-import Modules.DB.IDBDriver;
-import Modules.DB.IDataBaseEntity;
-import Modules.DB.MySQLDriver;
-import Modules.DataProvider.ISongDataProvider;
-import Modules.DataProvider.RestSongDataProvider;
-import Modules.Parser.IJsonParser;
-import Modules.Parser.JacksonParser;
-import Utils.DateUtil;
+import beatsaverclasses.Collection;
+import beatsaverclasses.Doc;
+import modules.dataprovider.ISongDataProvider;
+import modules.dataprovider.RestSongDataProvider;
+import modules.db.IDBDriver;
+import modules.db.IDataBaseEntity;
+import modules.db.MySQLDriver;
+import modules.parser.IJsonParser;
+import modules.parser.JacksonParser;
 
 import java.time.ZoneId;
 import java.util.List;
@@ -15,12 +14,12 @@ import java.util.concurrent.CompletableFuture;
 
 public class Main {
     public static void main(String[] args) {
-        IDBDriver driver = new MySQLDriver();
+        IDBDriver driver = new MySQLDriver("root", "admin123", "localhost", "3306", "Beatsaver");
         IJsonParser parser = new JacksonParser();
 
         ISongDataProvider songDataProvider = new RestSongDataProvider(ZoneId.of("Europe/Berlin"));
 
-        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(3, DateUtil.of(2018, 05, 8))
+        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(10)
                                                                         .thenAcceptAsync(latest -> {
 
                                                                             int songFrom = 0;

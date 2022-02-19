@@ -1,4 +1,4 @@
-package BeatSaverClasses;
+package beatsaverclasses;
 
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;

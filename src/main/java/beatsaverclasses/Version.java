@@ -1,8 +1,8 @@
-package BeatSaverClasses;
+package beatsaverclasses;
 
-import Modules.DB.IDBDriver;
-import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
+import modules.db.IDBDriver;
+import modules.db.IDataBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.sql.Connection;
@@ -144,7 +144,10 @@ public class Version implements IDataBaseEntity {
     public void insert(IDBDriver aDBDriver) {
         Connection connection = aDBDriver.getConnection();
 
-        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Version\n" + "(hash, songId, state, createdAt, sageScore, downloadURL, coverURL, previewURL)\n" + "VALUES('" + hash + "', '" + songId + "', '" + state + "', '" + createdAt + "', '" + sageScore + "', '" + downloadURL + "', '" + coverURL + "', '" + previewURL + "');\n";
+        String preparedStatement = """
+                INSERT IGNORE INTO Beatsaver.Version
+                (hash, songId, state, createdAt, sageScore, downloadURL, coverURL, previewURL)
+                """ + "VALUES('" + hash + "', '" + songId + "', '" + state + "', '" + createdAt + "', '" + sageScore + "', '" + downloadURL + "', '" + coverURL + "', '" + previewURL + "');\n";
 
         try {
             Statement statement = connection.createStatement();

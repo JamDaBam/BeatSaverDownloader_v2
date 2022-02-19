@@ -1,4 +1,4 @@
-package Modules.DB;
+package modules.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,6 +6,22 @@ import java.sql.SQLException;
 
 public class MySQLDriver implements IDBDriver {
     private Connection ivConnection;
+    private String ivUser;
+    private String ivPassword;
+    private String ivHost;
+    private String ivPort;
+    private String ivDatabase;
+
+    private MySQLDriver() {
+    }
+
+    public MySQLDriver(String aUser, String aPassword, String aHost, String aPort, String aDatabase) {
+        ivUser = aUser;
+        ivPassword = aPassword;
+        ivHost = aHost;
+        ivPort = aPort;
+        ivDatabase = aDatabase;
+    }
 
     @Override
     public Connection getConnection() {
@@ -14,7 +30,7 @@ public class MySQLDriver implements IDBDriver {
         }
 
         try {
-            ivConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + "Beatsaver", "root", "admin123");
+            ivConnection = DriverManager.getConnection("jdbc:mysql://" + ivHost + ":" + ivPort + "/" + ivDatabase, ivUser, ivPassword);
 
             ivConnection.setAutoCommit(false);
         } catch (SQLException aE) {

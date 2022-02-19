@@ -1,8 +1,8 @@
-package BeatSaverClasses;
+package beatsaverclasses;
 
-import Modules.DB.IDBDriver;
-import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
+import modules.db.IDBDriver;
+import modules.db.IDataBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.sql.Connection;
@@ -238,7 +238,10 @@ public class Doc implements IDataBaseEntity {
         String descriptionClean = description.replace("'", "''")
                                              .replace("\n", " ")
                                              .replace("\\", "\\\\");
-        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Song\n" + "(songId, name, description, uploaderId, uploaded, automapper, ranked, qualified, createdAt, updatedAt, lastPublishedAt)\n" + " VALUES('" + id + "', '" + nameClean + "', '" + descriptionClean + "', " + uploader.getId() + ", '" + uploaded + "', " + automapper + ", " + ranked + ", " + qualified + ", '" + createdAt + "', '" + updatedAt + "', '" + lastPublishedAt + "');\n";
+        String preparedStatement = """
+                INSERT IGNORE INTO Beatsaver.Song
+                (songId, name, description, uploaderId, uploaded, automapper, ranked, qualified, createdAt, updatedAt, lastPublishedAt)
+                """ + " VALUES('" + id + "', '" + nameClean + "', '" + descriptionClean + "', " + uploader.getId() + ", '" + uploaded + "', " + automapper + ", " + ranked + ", " + qualified + ", '" + createdAt + "', '" + updatedAt + "', '" + lastPublishedAt + "');\n";
 
         try {
 

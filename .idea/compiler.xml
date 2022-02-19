@@ -6,8 +6,26 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for BeatsaverDownloader_v2" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/systems/manifold/manifold-ext/2022.1.5/manifold-ext-2022.1.5.jar" />
+          <entry name="$MAVEN_REPOSITORY$/systems/manifold/manifold/2022.1.5/manifold-2022.1.5.jar" />
+          <entry name="$MAVEN_REPOSITORY$/systems/manifold/manifold-rt/2022.1.5/manifold-rt-2022.1.5.jar" />
+          <entry name="$MAVEN_REPOSITORY$/systems/manifold/manifold-util/2022.1.5/manifold-util-2022.1.5.jar" />
+          <entry name="$MAVEN_REPOSITORY$/systems/manifold/manifold-ext-rt/2022.1.5/manifold-ext-rt-2022.1.5.jar" />
+        </processorPath>
         <module name="BeatsaverDownloader_v2" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xplugin:Manifold " />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="BeatsaverDownloader_v2" options="-Xplugin:Manifold" />
+    </option>
   </component>
 </project>

@@ -1,4 +1,4 @@
-package Modules.DataProvider;
+package modules.dataprovider;
 
 import java.util.concurrent.CompletableFuture;
 

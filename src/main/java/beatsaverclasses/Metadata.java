@@ -1,8 +1,8 @@
-package BeatSaverClasses;
+package beatsaverclasses;
 
-import Modules.DB.IDBDriver;
-import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
+import modules.db.IDBDriver;
+import modules.db.IDataBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.sql.Connection;
@@ -127,7 +127,10 @@ public class Metadata implements IDataBaseEntity {
                                                    .replace("\\", "\\\\");
         String levelAuthorNameClean = levelAuthorName.replace("'", "''")
                                                      .replace("\\", "\\\\");
-        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Metadata\n" + "(songId, bpm, duration, songName, songSubName, songAuthorName, levelAuthorName)\n" + "VALUES('" + songId + "', " + bpm + ", " + duration + ", '" + songNameClean + "', '" + songSubNameClean + "', '" + songAuthorNameClean + "', '" + levelAuthorNameClean + "');\n";
+        String preparedStatement = """
+                INSERT IGNORE INTO Beatsaver.Metadata
+                (songId, bpm, duration, songName, songSubName, songAuthorName, levelAuthorName)
+                """ + "VALUES('" + songId + "', " + bpm + ", " + duration + ", '" + songNameClean + "', '" + songSubNameClean + "', '" + songAuthorNameClean + "', '" + levelAuthorNameClean + "');\n";
 
         try {
             Statement statement = connection.createStatement();

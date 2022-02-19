@@ -1,4 +1,4 @@
-package Modules.DataProvider;
+package modules.dataprovider;
 
 import org.apache.commons.io.IOUtils;
 

@@ -1,8 +1,8 @@
-package BeatSaverClasses;
+package beatsaverclasses;
 
-import Modules.DB.IDBDriver;
-import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
+import modules.db.IDBDriver;
+import modules.db.IDataBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.sql.Connection;
@@ -107,7 +107,10 @@ public class Stats implements IDataBaseEntity {
     public void insert(IDBDriver aDBDriver) {
         Connection connection = aDBDriver.getConnection();
 
-        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Stats\n" + "(songId, plays, downloads, upvotes, downvotes, score)\n" + "VALUES('" + songId + "', " + plays + ", " + downloads + ", " + upvotes + ", " + downvotes + ", " + score + ");";
+        String preparedStatement = """
+                INSERT IGNORE INTO Beatsaver.Stats
+                (songId, plays, downloads, upvotes, downvotes, score)
+                """ + "VALUES('" + songId + "', " + plays + ", " + downloads + ", " + upvotes + ", " + downvotes + ", " + score + ");";
 
         try {
             Statement statement = connection.createStatement();

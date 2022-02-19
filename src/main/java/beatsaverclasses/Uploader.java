@@ -1,8 +1,8 @@
-package BeatSaverClasses;
+package beatsaverclasses;
 
-import Modules.DB.IDBDriver;
-import Modules.DB.IDataBaseEntity;
 import com.fasterxml.jackson.annotation.*;
+import modules.db.IDBDriver;
+import modules.db.IDataBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.sql.Connection;
@@ -98,7 +98,10 @@ public class Uploader implements IDataBaseEntity {
 
         String nameClean = name.replace("'", "''")
                                .replace("\\", "\\\\");
-        String preparedStatement = "INSERT IGNORE INTO Beatsaver.Uploader\n" + "(uploaderId, name, hash, avatar, `type`)\n" + "VALUES(" + id + ", '" + nameClean + "', '" + hash + "', '" + avatar + "', '" + type + "');\n";
+        String preparedStatement = """
+                INSERT IGNORE INTO Beatsaver.Uploader
+                (uploaderId, name, hash, avatar, `type`)
+                """ + "VALUES(" + id + ", '" + nameClean + "', '" + hash + "', '" + avatar + "', '" + type + "');\n";
 
         try {
             Statement statement = connection.createStatement();
