@@ -3,48 +3,36 @@ import beatsaverclasses.Doc;
 import modules.dataprovider.ISongDataProvider;
 import modules.dataprovider.RestSongDataProvider;
 import modules.db.IDBDriver;
-import modules.db.IDataBaseEntity;
 import modules.db.MySQLDriver;
 import modules.parser.IJsonParser;
 import modules.parser.JacksonParser;
 
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         IDBDriver driver = new MySQLDriver("root", "admin123", "localhost", "3306", "Beatsaver");
         IJsonParser parser = new JacksonParser();
 
         ISongDataProvider songDataProvider = new RestSongDataProvider(ZoneId.of("Europe/Berlin"));
 
-        CompletableFuture<Void> voidCompletableFuture = songDataProvider.getLatest(10)
-                                                                        .thenAcceptAsync(latest -> {
+        final CompletableFuture<String[]> jsonsFuture = songDataProvider.getLatest(2);
 
-                                                                            int songFrom = 0;
-                                                                            int songTo;
+        final Collection[] parse = parser.parse(jsonsFuture.get(), Collection.class);
+        final List<Doc> dbEntities = Arrays.stream(parse)
+                                           .flatMap(aCollection -> aCollection.getDocs()
+                                                                              .stream())
+                                           .toList();
 
-                                                                            for (String json : latest) {
-                                                                                Collection parse = parser.parse(json, Collection.class);
+        for (int i = 0; i < dbEntities.size(); i++) {
+            System.out.println("process... " + (i + 1) + " / " + dbEntities.size());
+            dbEntities[i].insert(driver);
+        }
 
-                                                                                List<Doc> docs = parse.getDocs();
-                                                                                songTo = songFrom + docs.size();
-
-                                                                                System.out.println("process... " + songFrom + " to " + songTo);
-
-                                                                                for (IDataBaseEntity song : docs) {
-                                                                                    song.insert(driver);
-                                                                                }
-
-                                                                                songFrom = songTo;
-
-                                                                                driver.commit();
-                                                                            }
-
-                                                                            driver.close();
-                                                                        });
-
-        voidCompletableFuture.join();
+        driver.close();
     }
 }
