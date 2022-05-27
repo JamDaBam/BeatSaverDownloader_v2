@@ -62,7 +62,7 @@ public class RestSongDataProvider implements ISongDataProvider {
                     break;
                 }
 
-                System.out.println("process page " + i + "... " + currentDate);
+                System.out.println("process page " + (i + 1) + "... " + currentDate);
 
                 String json = exec(COMMAND_LATEST_WITH_TIMESTAMP, currentDate);
                 arrayList.add(json);

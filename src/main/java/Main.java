@@ -20,7 +20,7 @@ public class Main {
 
         ISongDataProvider songDataProvider = new RestSongDataProvider(ZoneId.of("Europe/Berlin"));
 
-        final CompletableFuture<String[]> jsonsFuture = songDataProvider.getLatest(2);
+        final CompletableFuture<String[]> jsonsFuture = songDataProvider.getLatest(50);
 
         final Collection[] parse = parser.parse(jsonsFuture.get(), Collection.class);
         final List<Doc> dbEntities = Arrays.stream(parse)
